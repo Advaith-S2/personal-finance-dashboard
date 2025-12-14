@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Insights Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content" style="display: flex; justify-content: center; align-items: center; position: relative;">
+        <div class="logo">
+            <span class="logo-text" style="font-size: 2rem; font-weight: 700;">Financial Insights Dashboard</span>
+        </div>
+        <button id="new-btn" class="btn-outline" style="display: none; position: absolute; right: 0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+    <main class="main">
+        <div id="upload-section">
+            <div class="upload-header">
+                <h2>Track Your Expenses</h2>
+                <p>Upload a CSV file and see where your money goes</p>
+            </div>
+            
+            <div id="dropzone" class="dropzone">
+                <input type="file" id="file-input" accept=".csv">
+                <div class="dropzone-content">
+                    <div class="dropzone-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <p class="dropzone-text">Drag CSV file here or click to browse</p>
+                    <p class="dropzone-hint">Supports CSV files with date, description, and amount columns</p>
+                </div>
+            </div>
+
+            <div id="file-preview" class="card" style="display: none;">
+                <div class="file-info">
+                    <div class="file-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="file-details">
+                        <p id="file-name" class="file-name">filename.csv</p>
+                        <p id="file-meta" class="file-meta">5 rows preview</p>
+                    </div>
+                    <button id="clear-file" class="btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th class="text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-body"></tbody>
+                </table>
+                
+                <div class="file-actions">
+                    <button id="process-btn" class="btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Process File
+                    </button>
+                    <button id="clear-btn" class="btn-outline">Clear</button>
+                </div>
+            </div>
+
+            <div class="upload-hint">
+                <p>Your CSV needs: date, description, and amount columns. We auto-sort into categories like Food, Transport, Shopping etc.</p>
+            </div>
+        </div>
+
+        <div id="results-section" style="display: none;">
+            <div class="summary-grid">
+                <div class="card summary-card">
+                    <div class="summary-content">
+                        <p class="summary-label">Total Spent</p>
+                        <p class="summary-value" id="total-spent">₹0</p>
+                        <p class="summary-hint">All expenses</p>
+                    </div>
+                    <div class="summary-icon blue">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 3h12"/>
+                            <path d="M6 8h12"/>
+                            <path d="m6 13 8.5 8"/>
+                            <path d="M6 13h3"/>
+                            <path d="M9 13c6.667 0 6.667 10 0 10"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-content">
+                        <p class="summary-label">Transactions</p>
+                        <p class="summary-value" id="transaction-count">0</p>
+                        <p class="summary-hint">Total count</p>
+                    </div>
+                    <div class="summary-icon green">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
+                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+                            <path d="M12 17.5v-11"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-content">
+                        <p class="summary-label">Average</p>
+                        <p class="summary-value" id="average-spent">₹0</p>
+                        <p class="summary-hint">Per expense</p>
+                    </div>
+                    <div class="summary-icon yellow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                            <polyline points="16 7 22 7 22 13"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card summary-card">
+                    <div class="summary-content">
+                        <p class="summary-label">Top Category</p>
+                        <p class="summary-value" id="top-category">-</p>
+                        <p class="summary-hint" id="top-percent">No data</p>
+                    </div>
+                    <div class="summary-icon orange">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card chart-card">
+                    <h3>Where Your Money Goes</h3>
+                    <div class="chart-container">
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <h3>Spending Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="insights-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                        <path d="M9 18h6"/>
+                        <path d="M10 22h4"/>
+                    </svg>
+                    <h3>Tips & Insights</h3>
+                </div>
+                <div id="insights-list"></div>
+            </div>
+
+            <div class="card">
+                <h3>Your Expenses</h3>
+                <table class="expense-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th class="text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+            <div class="card">
+    <h3>Category Breakdown</h3>
+
+    <table class="expense-table category-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th class="text-right">Total Amount</th>
+                <th class="text-right">Percentage</th>
+            </tr>
+        </thead>
+        <tbody id="category-body"></tbody>
+    </table>
+</div>
+
+           
+
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
