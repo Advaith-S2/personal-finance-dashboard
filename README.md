@@ -4,15 +4,15 @@ A front-end web application that analyzes personal expenses from a CSV file and 
 This project is built using HTML, CSS, and Vanilla JavaScript with Chart.js for visualization.
 No backend, no database — everything runs in the browser.
 
-🚀 Features
- Upload expenses using a CSV file
- Preview uploaded data before processing
- Automatic expense categorization using keyword matching
- Interactive pie chart (category-wise spending)
- Line chart showing spending over time
+🚀 Features<br>
+ Upload expenses using a CSV file<br>
+ Preview uploaded data before processing<br>
+ Automatic expense categorization using keyword matching<br>
+ Interactive pie chart (category-wise spending)<br>
+ Line chart showing spending over time<br>
 
-🛠️ Tech Stack
-HTML5 – Structure
-CSS3 – Styling & layout
-JavaScript (ES6) – Logic & data handling
-Chart.js – Data visualization
+🛠️ Tech Stack<br>
+HTML5 – Structure<br>
+CSS3 – Styling & layout<br>
+JavaScript (ES6) – Logic & data handling<br>
+Chart.js – Data visualization<br>
